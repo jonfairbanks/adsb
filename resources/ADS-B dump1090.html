@@ -1,0 +1,1644 @@
+
+<!-- saved from url=(0051)https://www.satsignal.eu/raspberry-pi/dump1090.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="description" content="Using a Raspberry Pi and low-cost TV receiver dongle to decode aircraft positions from ADS-B broadcasts.">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="keywords" content="Raspberry Pi, low-cost, ADS-B, TV receiver dongle, aircraft, positions, DVB-T, PlanePlotter, Plane Plotter">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>ADS-B dump1090</title>
+<!--mstheme--><link rel="stylesheet" type="text/css" href="./ADS-B dump1090_files/davi1001.css"><meta name="Microsoft Theme" content="davids-900para 1001">
+<meta name="Microsoft Border" content="tlb, default">
+<script charset="utf-8" src="./ADS-B dump1090_files/button.550007e6cc79c00bac51111d8131d860.js.download"></script><style data-styled-components=""></style></head>
+
+<body topmargin="0" cz-shortcut-listen="true"><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>
+
+<p align="center"><font size="6"><strong><img src="./ADS-B dump1090_files/dump1090.html_cmp_davids-900para000_bnr.gif" width="600" height="60" border="0" alt="ADS-B dump1090"></strong></font><br>
+<a href="https://www.satsignal.eu/"><img src="./ADS-B dump1090_files/home_cmp_davids-900para000_hbtn.gif" width="140" height="60" border="0" alt="Home Page" align="middle"></a> <a href="https://www.satsignal.eu/raspberry-pi/index.html"><img src="./ADS-B dump1090_files/up_cmp_davids-900para000_hbtn.gif" width="140" height="60" border="0" alt="Up" align="middle"></a> <a href="https://www.satsignal.eu/raspberry-pi/acars-decoder.html"><img src="./ADS-B dump1090_files/acars-decoder.html_cmp_davids-900para000_hbtn.gif" width="140" height="60" border="0" alt="ACARS decoder" align="middle"></a> <img src="./ADS-B dump1090_files/dump1090.html_cmp_davids-900para000_hbtn_p.gif" width="140" height="60" border="0" alt="ADS-B dump1090" align="middle"> <a href="https://www.satsignal.eu/raspberry-pi/AIS-receiver.html"><img src="./ADS-B dump1090_files/AIS-receiver.html_cmp_davids-900para000_hbtn.gif" width="140" height="60" border="0" alt="AIS receiver" align="middle"></a> <a href="https://www.satsignal.eu/raspberry-pi/kernel-cross-compile.html"><img src="./ADS-B dump1090_files/kernel-cross-compile.html_cmp_davids-900para000_hbtn.gif" width="140" height="60" border="0" alt="Cross-compiling" align="middle"></a> <a href="https://www.satsignal.eu/raspberry-pi/kernel-recompile.html"><img src="./ADS-B dump1090_files/kernel-recompile.html_cmp_davids-900para000_hbtn.gif" width="140" height="60" border="0" alt="Kernel compile" align="middle"></a> <a href="https://www.satsignal.eu/raspberry-pi/monitoring.html"><img src="./ADS-B dump1090_files/monitoring.html_cmp_davids-900para000_hbtn.gif" width="140" height="60" border="0" alt="Monitoring" align="middle"></a> <a href="https://www.satsignal.eu/raspberry-pi/NTP.html"><img src="./ADS-B dump1090_files/NTP.html_cmp_davids-900para000_hbtn.gif" width="140" height="60" border="0" alt="NTP" align="middle"></a> <a href="https://www.satsignal.eu/raspberry-pi/DigitalClock.html"><img src="./ADS-B dump1090_files/DigitalClock.html_cmp_davids-900para000_hbtn.gif" width="140" height="60" border="0" alt="Wall Clock" align="middle"></a></p>
+<p align="center">&nbsp;</p>
+
+</td></tr><!--msnavigation--></tbody></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td valign="top" width="1%">
+
+
+
+</td><td valign="top" width="24"></td><!--msnavigation--><td valign="top"><h1>ADS-B using dump1090 for the Raspberry Pi</h1>
+<table border="0" cellspacing="0" cellpadding="6">
+  <tbody><tr>
+    <td><img border="0" src="./ADS-B dump1090_files/dump1090-RPi.jpg" width="500" height="217"></td>
+    <td><img border="0" src="./ADS-B dump1090_files/dump1090-DVB-dongle.jpg" width="387" height="217"></td>
+  </tr>
+  <tr>
+    <td align="center"><font size="1">Raspberry Pi model B with Wi-Fi dongle and
+      optional GPS/PPS receiver.<br>
+      Raspberry Pi, case, and recommended <a href="http://www.adafruit.com/products/746">Adafruit
+      GPS</a> available from <a href="https://www.modmypi.com/">ModMyPi</a><br>
+      </font></td>
+    <td align="center"><font size="1">R820T/RTL2832U DVB receiver dongle.<br>
+      <a href="https://www.cosycave.co.uk/product.php?id_product=288">DVB stick</a>
+      and <a href="https://www.cosycave.co.uk/product.php?id_product=289" target="_blank">MCX-to-SMA
+      adapters</a> available from <a href="https://www.cosycave.co.uk/">CosyCave</a><br>
+      </font></td>
+  </tr>
+</tbody></table>
+<h2>What you can do with PlanePlotter and the dump1090 program.</h2>
+<p><a href="http://www.coaa.co.uk/planeplotter.htm" target="_blank">PlanePlotter</a> from COAA is a well-established program taking input from a variety of
+receivers, and which can also operate with Internet sharing.&nbsp; Below is a
+sample animated screenshot kindly provided by John Locker showing what PlanePlotter can
+do.&nbsp; Click the picture for a full-resolution animation.&nbsp; This note is about using a
+low-cost TV receiver dongle and a Raspberry Pi as a very low cost remote receiver for
+<a href="http://www.coaa.co.uk/planeplotter.htm" target="_blank">PlanePlotter</a>
+and similar programs.&nbsp; The same DVB-T dongle can work directly on your PC
+using the <a href="http://planeplotter.pbworks.com/Dump1090">Windows version of
+dump1090</a>, which supersedes with
+the earlier highly valued <a href="http://rtl1090.web99.de/" target="_blank">RTL1090 software</a>.&nbsp;
+You'll find some more notes in <a href="http://sopwith.ismellsmoke.net/?p=334" target="_blank">Sopwith's
+blog post</a>.</p>
+<p>In the picture above, I show my own Raspberry Pi which I have fitted with a GPS
+receiver for <a href="https://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html" target="_blank">highly accurate timekeeping</a>,
+although this is <i>not</i>  essential for this application.&nbsp; I recommend the
+<a href="https://store.uputronics.com/index.php?route=product/product&amp;path=60_64&amp;product_id=81" target="_blank">Uputronics
+GPS Expansion Board</a> or <a href="http://www.adafruit.com/products/746" target="_blank">Adafruit GPS receiver</a> 
+if you can't find a local supplier.</p>
+<table border="0" cellspacing="0" cellpadding="3">
+  <tbody><tr>
+    <td><a href="./ADS-B dump1090_files/PPanim.gif" target="_blank"><img border="0" src="./ADS-B dump1090_files/PPanim.gif" width="640" height="499">
+      </a></td>
+  </tr>
+  <tr>
+    <td>
+      <p align="center"><font size="1"><a href="./ADS-B dump1090_files/PPanim.gif" target="_blank">Click for a full-sized image.</a></font></p>
+    </td>
+  </tr>
+</tbody></table>
+<h3>The System - don't forget the antenna!</h3>
+<p>Typically, you will have a Windows PC running Plane Plotter, but you will
+want to get the antenna as high as possible with as clear a view as possible to
+maximise the range you can receive.&nbsp; But at 1.09 GHz the cable loss can be
+quite significant, even if you use good-quality satellite TV cable, so an
+alternative is to place a small computer with the receiving stick close to the
+antenna, and connect that to Plane Plotter using a Wi-Fi link.&nbsp; You could
+also use a USB extender cable but these can be problematic and have length
+limitations.&nbsp; The Raspberry Pi can meet the requirements for such a small
+computer, and it's a fun project to learn something about the Raspberry Pi, and
+a little about Linux.</p>
+<p>By the way, don't forget the antenna!&nbsp; The supplied antenna with the TV
+receiver dongle is <i>not</i> optimised for 1.09 GHz use, and you should get
+better results from a dedicated antenna.&nbsp; Graham Leighton has reported good
+results with <a href="http://www.lll.lu/~edward/edward/adsb/antenna/ADSBantenna.html" target="_blank">this
+home-made antenna</a>, and <a href="http://www.moonraker.eu/avionics-and-shipping/avionics/avionic-antennas-and-accessories" target="_blank">Moonraker</a>
+and <a href="http://www.dpdproductions.com/page_vhf_air.html#adsbout" target="_blank">DPD</a>
+will sell you antennas as well.&nbsp; Other home-made antennas: <a href="http://www.balarad.net/" target="_blank">coaxial
+collinear</a>, <a href="http://www.sprut.de/electronic/pic/projekte/adsb/adsb_en.html#antenne" target="_blank">wire
+collinear</a>.&nbsp; What matters is getting that antenna as high as possible
+with a clear view all round, ideally outside and not in the loft.</p>
+<h3>I have a FlightAware account - can I upload there?</h3>
+<p>Yes!&nbsp; FlightAware have released PiAware, their dump1090 client for
+FlightAware - see: <a href="https://flightaware.com/adsb/piaware/">https://flightaware.com/adsb/piaware/</a><br>
+<br>
+It’s a simple package that connects to an existing dump1090 instance and sends the data to FlightAware over an encrypted channel, authenticated with an existing FlightAware account.&nbsp;
+It works well, and doesn't provide a significant extra load on the Raspberry Pi.</p>
+<h3>Note!&nbsp; This is a Snapshot!</h3>
+<p>Please note that this information started as notes in 2013.&nbsp; Of course,
+the developments in the Raspberry Pi hardware, and the Linux OS variant used by
+the Raspberry Pi mean that at least some of this information will be out-of-date
+and some will be wrong as the new versions are not 100% backwards
+compatible.&nbsp; Please let me know of anything you find which needs updating,
+or could be better explained.&nbsp; Thanks!<br>
+&nbsp;</p>
+<p><i>The following information is mostly from Malcolm Robb, attavionics [at] btconnect [dot] com</i></p>
+<h3>Introduction</h3>
+<p>I have tonight [2013-Apr-06] uploaded a version of dump1090.c into the file shares section which I hope will implement GS/MU capability when used on a Raspberry Pi, running Raspbian Wheezy.&nbsp;
+The file is called dump1090_06_04_2013.c. This is a work in progress - the suffix to the file indicates the date it's posted.<br>
+<br>
+<i>Note:</i> If you are already and approved GS/MU then you should turn OFF your sharing of data until Bev/TheTeam approves and re-validates any hardware changes you make to your system.&nbsp;
+You don't want to be feeding duff data into the system.<br>
+<br>
+<i>Note:</i> This is NOT a windows program, and cannot be compiled or run on windows without some significant changes.&nbsp;
+What this program does is attempt to replicate the RTL1090.exe program for RTL2832 dongles on a Raspberry Pi.&nbsp;
+If you don't know what a Raspberry Pi is, then the file is unlikely to be any use to you.&nbsp;
+[<i>djt note:</i> the program may work on other Linux systems as well.]<br>
+<br>
+The Raspberry Pi (RPi for short) is small cheap (around £30) single board computer which supports 2 USB ports, and one Ethernet port.&nbsp;
+The intention is that you plug an RTL2832 dongle into one of the USB ports.&nbsp;
+You then connect the Raspberry Pi to your local/Home network either hardwired (via the
+Ethernet port), or by WiFi using an USB Ethernet dongle in the second USB socket.&nbsp;
+The only other required connection is a 5v power supply. If you use a WiFi dongle, then it is possible to mount the RPi up on the roof very close to your
+ADS-B antenna.&nbsp; This then means you don't have to run yards of lossy/expensive RF coax cable from the rooftop to your computer, so you should get better reception sensitivity.<br>
+<br>
+In addition to the RPi itself, you'll also need an RTL dongle and aerial, an RPi power supply, and either a USB
+WiFi dongle or an Ethernet cable.&nbsp; To set things up, you'll also need a USB Hub, a USB keyboard, a USB mouse, and a cable to connect the RPi to a suitable monitor - HDMI probably.&nbsp;
+Note that you <i>don't</i> need those for operating - just for setup - so you
+can borrow them from somewhere else for the few minutes of setup.&nbsp; Maplins sell the whole kit and caboodle (excluding the RTL dongle and Monitor) for £70.<br>
+<br>
+Dump1090 is a relatively new software project.&nbsp; [Note: operation as a
+Ground Station for Mlat is now supported with the <a href="https://www.satsignal.eu/raspberry-pi/dump1090.html#ppup1090">ppup1090</a>
+program.]&nbsp; The main changes I have introduced so far are:</p>
+<ul>
+  <li>Added a new command line switch, "--net-beast".&nbsp; This causes the output from Dump1090 to be in Beast binary format, containing the 6 byte timestamp data.<br>
+    </li>
+  <li>Implemented a timestamp counter for Mlat/GS use.&nbsp; The timestamp has a
+    500 nS
+    (2 MHz) granularity.<br>
+    </li>
+  <li>Tidied up the code a bit to make it easier for me to understand.&nbsp; That doesn't
+    necessarily mean it'll be easier for you to understand, of course!</li>
+</ul>
+<p>What I have <i>not</i> done is modify the ADS-B/Mode-S detection algorithms.&nbsp;
+Whilst playing with the software I have noticed that dump1090 misses quite a lot of the available
+Mode-S frames present in the data.&nbsp; In some of my off air recorded files, it misses 30% or more, mainly due to the poor detection
+algorithm.&nbsp; However, it does correctly receive strong local signals, so it's good enough as a starter.<br>
+</p>
+<h3>Remote operation</h3>
+<p><i>djt notes:</i>&nbsp; As the aim here is to provide a remote feed to Plane Plotter,
+perhaps we should say a little about remote operation.&nbsp; You don't need to
+have a keyboard, mouse and display to set up the Raspberry Pi providing the
+Linux you install as been configured to allow SSH - a remote secure shell which
+runs over the network.&nbsp; You can use SSH via a LAN connection initially with
+a program like <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/" target="_blank"> PuTTY</a> installed on your PC.&nbsp;
+You can do everything described here directly from the command-line.&nbsp; Once you have PuTTY working over your hard-wired LAN connection, you can set up the
+Raspberry Pi with a Wi-Fi dongle and run the device wirelessly.</p>
+<p>The <a href="http://www.raspberrypi.org/" target="_blank">NOOBS software</a>,
+however, does require a keyboard and HDMI display just for the initial
+configuration.&nbsp; Choose the Raspbian operating system. Your house TV
+may well have an HDMI input you can borrow...</p>
+<p>Setup with PuTTY is described <a href="https://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html#headless" target="_blank">here</a>.</p>
+<p>Setting up Wi-Fi from the command-line is described <a href="http://www.raspberrypi.org/phpBB3/viewtopic.php?f=26&amp;t=26795" target="_blank">here</a>,
+although setup with the GUI works well on Raspbian Jessie.</p>
+<p>Using a single Ethernet cable from Raspberry Pi directly to your Netbook or
+laptop PC is described <a href="http://pihw.wordpress.com/2013/04/11/use-your-computers-screen-keyboard-for-your-raspberry-pi/" target="_blank">here</a>.&nbsp;
+This avoids the need to have a spare port on your LAN router or switch, and to
+have a power-consuming Wi-Fi dongle attached to the Raspberry Pi.&nbsp; Your PC
+can still talk to the Internet over its own Wi-Fi link. Thanks to Fred
+Hillhouse N7FMH for spotting that page.</p>
+<p><i>Roger House notes: </i>I am just building a Raspberry Pi 3 to use with my new
+<a href="http://airspy.com/" target="_blank">Airspy</a> and had an issue trying to connect it to my
+Wi-Fi.&nbsp; It seems that out of the box the Wi-Fi is only setup to use channels 1 to 11, but my
+Virgin Media Super Hub uses channels 1 to 13.&nbsp; I found the following on the
+Web that has resolved the issue and now allows me to connect to channel 13.</p>
+<blockquote>
+<p><a href="http://tosbourn.com/get-channels-12-and-13-on-the-raspberry-pi-3/" target="_blank">http://tosbourn.com/get-channels-12-and-13-on-the-raspberry-pi-3/</a><i><br>
+</i></p>
+</blockquote>
+<h3><a name="web-output">Remote Web output from the dump1090 program</a></h3>
+<p>The dump1090 program when running on the Raspberry Pi, can also produce a
+rather nice plot on a Web browser running on your local network (PC, Linux or
+Mac).&nbsp; You might also like to use this as a check that the dump1090 program
+is still running as expected, and that the TCP/IP link is still up on your
+Raspberry Pi. Simply enter the URL:</p>
+<p> http://&lt;address-or-name-of-Raspberry-Pi&gt;:8080</p>
+<p>where the address can be a number or a name, e.g.</p>
+<p> http://192.168.0.19:8080</p>
+<p><font size="1">Click the image for a larger version.</font><br>
+<a href="https://www.satsignal.eu/raspberry-pi/dump109-web-plot.jpg"><img border="0" src="./ADS-B dump1090_files/dump109-web-plot-sm.jpg" width="550" height="311"></a><br>
+</p>
+<h3><a name="RTL">Preparing the Raspberry Pi</a></h3>
+<p>Please note I'm not any kind of RPi/Linux guru - my first contact with it was 6 days ago.&nbsp;
+If you have RPi/Linux questions, you'll probably need to ask someone else.&nbsp;
+In the lines below, can highlight the command required, use Ctrl-C or
+right-click Copy to get the text into the clipboard, and then if you use PuTTY
+you can right-click on the text area of the terminal session to enter the
+command into the Raspberry Pi.&nbsp; To use the
+software, do the following (tested on Linux 3.6.11 and NOOBS/Raspbian 3.12.22+).</p>
+<p>[<i>djt:</i> If you need help with your Raspberry Pi and following the
+instructions below, please ask on the <a href="http://groups.yahoo.com/group/planeplotter/info" target="_blank">Plane
+Plotter Yahoo group</a>.&nbsp; I am unable to answer direct e-mails about using
+the Raspberry Pi for ADB-S reception.]</p>
+<ol>
+  <li>I suggest you start with a new/clean SD Card.&nbsp; Download the latest
+    NOOBS software (or Raspbian Wheezy OS), and follow the instructions on preparing the SD card here:<br>
+     <a href="http://www.raspberrypi.org/downloads" target="_blank">http://www.raspberrypi.org/downloads<br>
+    </a></li>
+  <li>Get your RPi working in it's simplest form so that it can connect to the internet via your home network.<br>
+    </li>
+  <li>If you don't want to bother with a keyboard and display, you can run your
+    RPi headless as described <a href="https://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html#headless" target="_blank">here</a>.<br>
+    </li>
+  <li>Please note that during some of the following commands you may be prompted
+    for Yes or No answers, perhaps about the disk space which will be used by
+    the new download.&nbsp; Unless specified otherwise here, simply accept the
+    default answer, usually "Yes" (or "y").<br>
+    </li>
+  <li>Open a command prompt and type:<br>
+    
+    <ul>
+      <li><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px">sud<span>o
+        apt-get update</span></em></span></li>
+    </ul>
+    <p>This will update the
+    table of updates to the latest revision.&nbsp; This may take some time to complete.<br>
+    <i>Hint: </i>you can use the Copy clipboard function in Windows to copy a
+    command from this Web page, and then right-click your PuTTY screen to enter
+    the command into the RPi session.&nbsp; Leave out the quotation marks when
+    copying the text.<br>
+    It's an idea to check the Linux version at this point with a <span style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><i>uname
+    -a</i></span> command. Initially, from a NOOBS install, mine was 3.6.11+, although on a
+    second run, after an upgrade it was 3.10.23+, and after a third a day later
+    it was 3.10.24+.<br>
+    </p></li>
+  <li>Again at the command prompt type:<br>
+    
+    <ul>
+      <li><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px">sud<span>o
+        apt-get upgrade</span></em></span></li>
+    </ul>
+    <p>This will update the operating system to the latest version, and may therefore take
+    "some time".&nbsp; Go and make a coffee! Note that upgrades
+    after 2013-Dec-13 may overwrite the drivers required for the DVB-T USB
+    stick.&nbsp; Please see <a href="https://www.satsignal.eu/raspberry-pi/dump1090.html#fails-after-upgrade">here</a> if this
+    happens to you.</p><p>If, before any upgrade, your OS version shows as 3.6.11+
+    with the <span style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><i>uname
+    -a</i></span> command I suggest leaving it without the upgrade.<br>
+    </p></li>
+  <li>Next, at the command prompt type:<br>
+    
+    <ul>
+      <li><span style="font-family: inherit; line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><i>sudo&nbsp;apt-get install git-core</i></span></li>
+    </ul>
+    <p>This installs the git
+    repository fetch code.&nbsp; You may already have this installed, in which
+    case you will get a message advising that you already have the most
+    up-to-date version.&nbsp; On the minimal Linux I started with "git"
+    was not even present.<br>
+    </p></li>
+  <li>Next, we will use the instructions to setup sdr-rtl which are given <a href="http://zr6aic.blogspot.co.uk/2013/02/setting-up-my-raspberry-pi-as-sdr-server.html" target="_blank">on
+    this Web page</a>.&nbsp; We stop where the text says "To run the rtl server type rtl_tcp -a and
+    the IP address of your Pi".&nbsp; For your convenience, the
+    instructions are copied below, and these are <i>exactly</i> what I typed
+    into my Raspberry Pi.&nbsp; You <i>don't</i> need to follow the instructions
+    on the quoted Web page as well as what's below.&nbsp; Step (9) below has
+    been changed so that you no longer need the <i>"sudo"</i> commands
+    to run the programs accessing the dongle.<br>
+    &nbsp;<br>
+    
+    <ol>
+      <li><span style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px">sudo&nbsp;apt-get install git</span></em></span></li>
+      <li><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span>sudo&nbsp;apt-get&nbsp;install&nbsp;cmake</span></em></span></li>
+      <li><span><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px">sudo&nbsp;apt-get&nbsp;install&nbsp;libusb-1.0-0-dev&nbsp;
+        # there is a slip on the referenced
+        page </em></span></li>
+      <li><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span>sudo&nbsp;apt-get&nbsp;install build-essential</span></em></span><em style="border: 0px; line-height: 20px; margin: 0px; padding: 0px; vertical-align: baseline;">
+        <span style="background-color: #cccccc; font-family: inherit;"><br>
+        </span>
+        </em>
+        <div>
+          &nbsp;<br>
+          You can put all those commands onto one line should you wish (thanks
+          to Sam Reed for pointing this out):
+          <p><span style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><i>sudo
+          apt-get install git git-core cmake libusb-1.0-0-dev build-essential</i></span></p>
+          <p>although I prefer to do one command at a time in case there is an
+          error, and you can see which step caused the problem.</p>
+          <p>Now install theRTL-2832U USB dongle driver source and
+          compile:<br>
+          
+        </p></div>
+      </li>
+      <li><span style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px">git&nbsp;clone git://git.osmocom.org/rtl-sdr.git</span></em></span></li>
+      <li><span style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px">cd rtl-sdr</span></em></span></li>
+      <li><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span>m</span>kdir&nbsp;build</em></span></li>
+      <li><span style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px">cd build</span></em></span></li>
+      <li><span><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px">cmake ../ -DINSTALL_UDEV_RULES=ON</em></span></li>
+      <li><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span><span style="background-color: #E0E0E0; font-family: inherit">make<br>
+        <br>
+        </span></span></em>Note that faster execution can be had on more recent
+        Raspberry Pi models (B+, 3) by using four processors.<br>
+        The command becomes:<em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span style="background-color: #E0E0E0; font-family: inherit">&nbsp;
+        make -j5<br>
+        </span></em></li>
+      <li><span style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px">sudo make install</span></em></span></li>
+      <li><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px; vertical-align: baseline; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span>sudo ldconfig</span></em></span><em style="border: 0px; line-height: 20px; margin: 0px; padding: 0px; vertical-align: baseline;"><span style="background-color: #cccccc; font-family: inherit;"><br>
+        <br>
+        </span>
+        </em>
+        if it was successful you should see no return on the previous command.<br>
+        Install the RTL-2832U USB dongle on external powered USB HUB.<br>
+        <br>
+        While many report using a powered USB hub, you may found the
+        built-in ports adequate, if you have
+        enough 5V power fed to the Raspberry Pi.&nbsp; You may get different
+        results, and possibly if you use the live plug-and-play will more likely
+        need the hub.&nbsp; I didn't need to plug and unplug the devices live, tested with a 1.5A
+        supply, and intend to use a 2A supply from <a href="https://www.modmypi.com/" target="_blank">ModMyPi</a>
+        eventually.&nbsp; If you plug in the dongle directly to the RPi and it
+        spontaneously reboots, don't be surprised!&nbsp; After an upgrade to
+        3.10 of Linux I also found that I needed a powered USB hub for correct
+        working of the dongle.<br>
+        &nbsp;&nbsp;
+        </li>
+      <li><span style="font-family: inherit;"><span style="background-color: #E0E0E0; font-family: inherit; vertical-align: baseline; line-height: 20px; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><em style="background-color: #E0E0E0; line-height: 20px; vertical-align: baseline; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><span>sudo ldconfig</span></em></span><em style="background-color: #cccccc; border: 0px; line-height: 20px; margin: 0px; padding: 0px; vertical-align: baseline;">
+        <br>
+        <br>
+        </em>
+        </span>You
+        should now do these steps to tell the system about what the new device is
+        allowed to do, and reboot the system:<span style="background-color: #cccccc; line-height: 20px; vertical-align: baseline; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><br>
+        </span><span style="background-color: #E0E0E0; font-family: inherit"><em style="line-height: 20px; vertical-align: baseline; background-color: #E0E0E0; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px">cd
+        ~<br>
+        sudo cp ./rtl-sdr/rtl-sdr.rules /etc/udev/rules.d/<br>
+        sudo reboot</em>
+        </span>
+        <span style="background-color: #cccccc; font-family: inherit;"><em style="line-height: 20px; vertical-align: baseline; background-color: #cccccc; font-family: inherit; border-style: none; border-width: 0px; margin: 0px; padding: 0px"><br>
+        </em>
+        </span>
+        </li>
+    </ol>
+  </li>
+      <li><i>
+        <span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+        rtl_test -t
+        </span>
+        <span style="background-color: #cccccc; font-family: inherit; line-height: 20px;">
+        <br>
+        </span>
+        </i><br>
+        The first time I tried this was with R802T
+        tuner, and the test didn't work, saying it wanted an E4000 tuner.&nbsp; As I happened to have an E4000 device, I carried on using it.&nbsp;
+        Further reading suggests that the test (-t) command is <i> only</i> intended to
+        find the gap in the E4000 frequency coverage.&nbsp; If you have a RTL-based
+        dingle, omit the "-t".&nbsp; I
+        found no need for a reboot.&nbsp; Some issues may arise here:</li>
+</ol>
+<ul>
+  <li>If you have used the more complex form of <i>cmake</i> in step 8.9
+above when building rtl-sdr, you won't need the <i>sudo</i> prefix to run the <i>dump1090</i>
+command in the future.&nbsp; But you will still need <i>sudo</i> for the other
+commands where shown, like apt-get.<br>
+    </li>
+  <li>On most versions of Raspian except very early ones, you will need to
+    "blacklist" the rtl2830 device to stop the OS using the DAB/TV
+    drivers for the device.&nbsp; The&nbsp;solution I found on Google was:<br>
+    &nbsp;
+    <ul>
+      <li> In /etc/modprobe.d create a new file with sudo, named no-rtl.conf (the actual name is not important, but the .conf is).<br>
+        <br>
+        <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">cd
+        /etc/modprobe.d<br>
+        sudo nano no-rtl.conf</span></i><br>
+        &nbsp;</li>
+      <li>Add the following lines to the new file:<br>
+        &nbsp;<br>
+        <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">blacklist dvb_usb_rtl28xxu<br>
+        blacklist rtl2832<br>
+        blacklist rtl2830</span></i><br>
+        &nbsp;</li>
+      <li>The second and third lines might not even be necessary, but on the other hand can't harm either.<br>
+        &nbsp;</li>
+      <li>After a reboot dump1090 works again as intended.</li>
+    </ul>
+  </li>
+</ul>
+  <p>You can now re-run the test if required:&nbsp;&nbsp;<span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+        <i><br>
+        <br>
+        rtl_test -t
+        </i>
+        </span>
+</p>
+<ul>
+  <li>If you get error messages such as "<font face="Courier New">cb transfer status: 1,
+    canceling.</font>" it may be because the dongle is taking too
+    much power from the Raspberry Pi.&nbsp; I've not seen this with all the dongles I've tested, so I was caught out the first time it happened.
+    You may be able to resolved this problem by putting the USB dongle on a
+    separately powered USB hub. I used <a href="http://www.pcworld.co.uk/gbuk/pc-accessories/usb-expansion-hubs/external-expansion-hubs/advent-hb212-4-port-usb-2-0-hub-13212940-pdt.html" target="_blank">this
+    one</a> as it was to hand, but it's not critical.<br>
+    &nbsp;</li>
+  <li>At this point, you might want to calibrate the dongle you are using to
+    know what the frequency offset is.&nbsp; Usually, for ADS-B reception, the
+    error which may be present is not critical. being up to 100 ppm (parts per
+    million) which is a 100 KHz error at 1 GHz.&nbsp; However, for best results
+    you should calibrate the dongle and use the measured offset to get best
+    results.&nbsp; The easiest way to get a calibration is to use the <a href="https://www.satsignal.eu/raspberry-pi/acars-decoder.html#kalibrate">kalibrate
+    program</a>, which I describe <a href="https://www.satsignal.eu/raspberry-pi/acars-decoder.html#kalibrate">here</a>.</li>
+</ul>
+<ol>
+  <li>Now download the latest release dump1090 application source code.&nbsp; We will use
+    the instructions from <a href="http://g4vxe.blogspot.co.uk/2013/01/raspberry-pi-progress-rtladsb-wspr-wsjt.html" target="_blank">this
+    Web page</a>.&nbsp; We start following the instructions from about half way down the page where it says "git clone
+    git://github.com/antirez/dump1090.git", which requires us to take these steps:<i><span style="background-color: #cccccc; font-family: inherit; line-height: 20px"><br>
+    </span></i>
+    
+    <ol>
+      <li> <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">cd
+        /home/pi/
+        </span><span style="background-color: #cccccc; font-family: inherit; line-height: 20px"><br>
+        </span></i>or <i><span style="background-color: #cccccc; font-family: inherit; line-height: 20px"><br>
+        </span><span style="background-color: #E0E0E0"><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+        cd ~</span></span></i> (goes to your home directory)
+      </li>
+      <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">git
+        clone git://github.com/MalcolmRobb/dump1090.git</span></i></li>
+      <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">cd
+        dump1090</span></i></li>
+      <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">make</span><br>
+        [djt] I got errors at this point where pkg-config could not be
+        found on my minimal Linux.&nbsp; Installing pkg-config cured this problem, but
+        if you had no errors from the </i>make<i> step you will not need not
+        need to do steps 5 and 6.<br>
+        </i></li>
+      <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+        apt-get install pkg-config</span></i></li>
+      <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">make</span></i><br>
+        </li>
+    </ol>
+  </li>
+  <li>When you type "./dump1090 --interactive", if you've got everything installed, compiled and connected correctly then you should see a screen displaying aircraft being
+    received by your RPi.&nbsp; However, likely you will need to run this with privilege to
+    allow the program to open the port. Note the double "--" if
+    you are typing the command by hand, and note the "./" in front of
+    the word "dump1090".<br>
+    <br>
+    <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+    ./dump1090 --interactive</span></i></li>
+</ol>
+<p>If you want to see the output over the network at this point, remember to add
+the "--net" command-line switch:</p>
+<blockquote>
+  <p>
+    <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+    ./dump1090 --interactive --net</span></i></p>
+</blockquote>
+<p>There has been one report from Marco Haakmeester that the file rtl-sdr.h and
+dump1090.c require changes to compile properly, but Malcolm was unable to
+reproduce the problem.&nbsp; Contact Marco for more details if this affects you
+- I'll send his e-mail address on request.<br>
+&nbsp;
+    </p>
+<h3><a name="script">Script for doing everything at once</a>
+    </h3>
+<p>Chris Jeffries has kindly contributed the following script to prepare your
+Raspberry Pi for using dump1090.&nbsp; If you try the script, please report back
+to the <a target="_blank" href="https://groups.io/g/planeplotter"> PlanePlotter
+Group</a> your success or otherwise.&nbsp; Thanks to
+Chris for making this available.
+    </p>
+<p>On the Raspberry Pi, you can download the script <a href="https://www.satsignal.eu/raspberry-pi/build-1090.sh">here</a>,
+then make it executable, and then run it with these three commands:
+    </p>
+<blockquote>
+  <p><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">wget
+  http://www.satsignal.eu/raspberry-pi/build-1090.sh<br>
+  chmod +x build-1090.sh<br>
+  ./build-1090.sh</span></i>&nbsp;
+    </p>
+</blockquote>
+<p>The box below shows what the script contains.&nbsp; You could copy the text
+below to your clipboard:
+    </p>
+<table border="1" cellspacing="0" cellpadding="10">
+  <tbody><tr>
+    <td>
+      <pre>#!/bin/bash
+ sudo apt-get update
+ sudo apt-get upgrade
+ sudo printf 'blacklist dvb_usb_rtl28xxu\nblacklist rtl2832\nblacklist rtl2830' &gt; /etc/modprobe.d/nortl.conf
+ sudo apt-get install git-core
+ sudo apt-get install git
+ sudo apt-get install cmake
+ sudo apt-get install libusb-1.0-0-dev  
+ sudo apt-get install build-essential 
+ git clone git://git.osmocom.org/rtl-sdr.git
+ cd rtl-sdr
+ mkdir build
+ cd build
+ cmake ../ -DINSTALL_UDEV_RULES=ON
+ make
+ sudo make install
+ sudo ldconfig
+ cd ~
+ sudo cp ./rtl-sdr/rtl-sdr.rules /etc/udev/rules.d/
+ git clone git://github.com/MalcolmRobb/dump1090.git
+ cd dump1090
+ make
+ sudo reboot</pre>
+    </td>
+  </tr>
+</tbody></table>
+<p>.. and on the Raspberry Pi use nano to create a script:
+    </p>
+<p>&nbsp;&nbsp;&nbsp; <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">nano
+build-1090</span></i>
+    </p>
+<p>Use the right-click mouse button to paste the contents of the clipboard into
+the script file you are creating (assuming you are using PuTTY to access the
+Raspberry Pi).&nbsp; Once pasted, exit nano with a Crtl-X, answering
+"Y" to the do you want to save question.&nbsp; Finally, you need to
+make the script executable using the chmod command:
+    </p>
+<p>&nbsp;&nbsp;&nbsp; <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">chmod
++x build-1090</span></i>
+    </p>
+<p>and execute it with full privilege:
+    </p>
+<p>&nbsp;&nbsp;&nbsp; <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+./build-1090</span></i>
+    </p>
+<p>Thanks to Steve Tickle for those further notes.
+    </p>
+<p><i>Fred Hillhouse Jr (N7FMH) notes:</i>
+    </p>
+<blockquote>
+<p><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo printf 'blacklist
+dvb_usb_rtl28xxu\nblacklist rtl2832\nblacklist rtl2830' &gt; /etc/modprobe.d/nortl.conf</span></i>
+    </p>
+</blockquote>
+<p>It turns out that the above command did not work within the script.&nbsp; I logged
+in as SU and entered the single line and then did reboot.&nbsp; The dongle was then found.&nbsp;
+I tried to start dump1090 immediately and was reminded that I needed to change the directory.
+    </p>
+<p>An alternative script to build the program is available from Roger House, who
+notes:
+    </p>
+<table border="1" cellspacing="0" cellpadding="10">
+  <tbody><tr>
+    <td><p>It has taken me two days but I believe I have not (now?) sorted all the issues with my build script.&nbsp;
+      I now have hosted it on www.github.com so it downloads in the correct format.&nbsp;
+      I have just built 3 SD cards which work straight away.&nbsp; Here it is.&nbsp;
+      PLEASE make sure your RTL USB dongle is not plugged in until your pi reboots at the end of the script.
+      </p><p>Please follow these instructions:-</p>
+      <blockquote>
+      <p><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">git
+      clone git://github.com/houser747/dump1090_buildscript.git<br>
+      sudo chmod +x ./dump1090_buildscript/build1090.sh<br>
+      ./dump1090_buildscript/build1090.sh</span></i></p>
+      </blockquote>
+      <p>Please advise any issues found.&nbsp; Roger House&nbsp; (roger.house@me.com)</p></td>
+  </tr>
+</tbody></table>
+<p>Please note that to download Roger's script you will need git installed, so
+you first need to enter the command:
+    </p>
+<blockquote>
+  <p><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+  apt-get install git</span></i>
+    </p>
+</blockquote>
+<p>Of course, it's much more within the spirit of the Raspberry Pi to learn, and
+my personal feeling is that you learn more by entering the commands one at a
+time and watching what they do, than by running a script.....<br>
+&nbsp;
+    </p>
+<h3>
+Changes required for Plane Plotter Mlat (multi-lateration)
+    </h3>
+<p>So that's Malcolm's version of dump1090 installed and running on your RPi.&nbsp;
+This version already incorporates the changes required for
+a Plane Plotter Mlat Ground Station.</p>
+<ol>
+  <li>Run the new version of dump1090 by typing:<br>
+    <br>
+    <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+    ./dump1090 --interactive --net</span></i><br>
+    </li>
+  <li>You should see the same display as before on the RPi screen, but the extra command switches should enable a network server that will allow the PP software running on your PC to connect to the RPi.</li>
+</ol>
+<p>[djt] notes: To reduce the amount of network traffic you can replace the
+--interactive with --quiet.</p>
+<p>To run the command so that it continues to work after you logout from the
+Raspberry Pi, you can run a command with a trailing ampersand, such as:</p>
+<ul>
+  <li>
+    <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+    ./dump1090 --quiet --no-fix --gain -10 --net
+    &amp;</span></i></li>
+</ul>
+<p>Alternatively, for a reduced CPU and network I/O load:</p>
+<ul>
+  <li>
+    <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+    ./dump1090 --quiet --no-fix --gain -10 --net --net-ro-size 500 --net-ro-rate 5
+    &amp;</span></i></li>
+</ul>
+<p>Note the "--no-fix" parameter to disable single-bit error
+correction, and the "--gain -10" parameter to set maximum gain.&nbsp;
+Please ask in the <a href="https://groups.io/g/planeplotter" target="_blank">PlanePlotter
+Group</a> if you have problems as a result of using the gain
+parameter.&nbsp; There will doubtless be better ways of doing this suggested by those more
+expert in Linux than I.&nbsp; See the section below on automatic starting, for
+example.&nbsp; If you intend to use the dump1090 program for Mlat, be <i>sure</i>
+to tell Bev so that he can set up the server correctly for you, as the timing
+for the various Mlat data sources can differ. [djt]<br>
+    </p>
+<h3>To find the IP address of your Raspberry Pi...</h3>
+<p>To enable Plane Plotter to talk to your Raspberry Pi, you will need to know
+its network address, or IP address.&nbsp; You can find this out by entering the
+command:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">ifconfig</span></i></li>
+</ul>
+<p>Look for the line containing "inet addr:".&nbsp; On my Wi-Fi
+connected RPi, that line is in a section "wlan0", which looks like
+this:</p>
+<pre>wlan0     Link encap:Ethernet  HWaddr 00:26:f2:aa:ff:ff
+          inet addr:<b>192.168.0.19</b>  Bcast:192.168.0.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:3093550 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1752901 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:379098734 (361.5 MiB)  TX bytes:667598489 (636.6 MiB)</pre>
+<p>so you can see that the IP address is: 192.168.0.19.&nbsp; On a LAN connected
+RPi, the information will be in the eth0 section.</p>
+<pre>eth0      Link encap:Ethernet  HWaddr b8:27:eb:e4:10:a9
+          inet addr:<b>192.168.0.111</b>  Bcast:192.168.0.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1852989 errors:0 dropped:125 overruns:0 frame:0
+          TX packets:296245 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:191447650 (182.5 MiB)  TX bytes:40837008 (38.9 MiB)</pre>
+<p>so you can see that the IP address is: 192.168.0.111.<br>
+</p>
+<h3>Next, you need to configure Plane Plotter to talk to the RPi</h3>
+<ol>
+  <li>Start Plane Plotter on your PC.<br>
+    </li>
+  <li>Select Options =&gt; Mode-S Receiver =&gt; RTL dongle RPi dump1090 =&gt; Setup TCP/IP client.<br>
+    </li>
+  <li>In the window that appears, type in the IP address of your RPi on your local network, followed by
+    ":30005".&nbsp; For example, if your RPi appears as IP address 192.168.0.19 on your home network, so
+    type in "192.168.0.19:30005".&nbsp; Then click OK.<br>
+    </li>
+  <li>Select Options =&gt; I/O settings.<br>
+    </li>
+  <li>In the dialog that appears check the Input data, Mode-S/ADS-B box, and select "RTL
+    &gt; RPi+Dump1090" from the list window to the right.<br>
+    </li>
+  <li>Press the green circle on the toolbar to start Plane Plotter monitoring.&nbsp;
+    The planes that are appearing on the RPi screen should now start to appear on your
+    Plane Plotter screen.<br>
+    </li>
+</ol>
+<h3><a name="view1090">Checking it's working using view1090.exe</a></h3>
+<p>Malcolm has released a Windows program which you can use to view the output
+of dump1090.&nbsp; It's a command-line program, and has text output. You
+can download the program from:</p>
+<p><a href="https://github.com/MalcolmRobb/dump1090/blob/master/dump1090-win.1.10.3010.14.zip" target="_blank">https://github.com/MalcolmRobb/dump1090/blob/master/dump1090-win.1.10.3010.14.zip</a></p>
+<p>by pressing the Raw button and saving the file.&nbsp; You should right-click
+the downloaded <font face="Courier New">view1090.exe</font>, Properties, and
+press the Unblock button if it is visible.&nbsp; This Windows program implements the --interactive screen as a separate application.&nbsp;
+It connects to dump1090 over the same port as plane plotter does, so gets all the
+information that PP does.&nbsp; To use the program, either create a shortcut
+with the requisite properties, or build a command file named e.g. <font face="Courier New">run-view1090.cmd</font>,
+which contains:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">C:\&gt;
+    view1090.exe --net-bo-ipaddr &lt;your_rpi_IPv4&gt; --net-bo-port &lt;your_rpi_port&gt;
+--interactive-rows 60</span></i></li>
+</ul>
+<p>i.e. on my system:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; line-height: 20px; font-family: inherit">C:\&gt;
+    view1090.exe --net-bo-ipaddr
+raspi-3</span></i></li>
+</ul>
+<p>You only need the <font face="Courier New"> --net-bo-port</font> setting if you've configured your dump1090 command line switches using
+"--net-ro-port".</p>
+<p>Double-click <font face="Courier New">run-view1090.cmd</font> to
+run the program, and use Ctrl-C to exit.<br>
+</p>
+<h3>Keeping the Raspberry Pi's IP address across boots</h3>
+<p>Steve Tickle reminded us that as the IP address is hard-coded into Plane
+Plotter in the step above, you will need to make it constant across system
+reboots so that your Plane Plotter installation can find the Raspberry Pi every
+time.&nbsp; The easiest way to do this may be to reserve an IP address in your
+router for the Raspberry Pi, which matches the MAC address of the Wi-Fi device (00:26:f2:aa:ff:ff
+in the example above) to a fixed IP address (192.168.0.19 in the above
+example).&nbsp; Consult your router operations guide for information on how to
+do this.&nbsp; An alternative may be to set the Raspberry Pi to a fixed (static)
+IP
+address as described <a href="http://elinux.org/RPi_Setting_up_a_static_IP_in_Debian" target="_blank">here</a>.
+</p>
+<p><i>Note:</i> you may need to edit the hosts file on your systems to allow
+access to the device by name rather than by IP address.&nbsp; Add a line such
+as: <font face="Courier New">192.168.0.19 raspberry-pi-1</font>
+to the file.&nbsp; On Windows-8, note that Windows Defender may try and replace
+an edited hosts file with the default one, thus removing your changes!&nbsp; On
+Windows, the file to be edited is \Windows\system32\drivers\etc\hosts, and you
+will likely need Administrator access to edit that file.<br>
+</p>
+<h3>.. and finally</h3>
+<p>Others will no doubt have suggestions on how to ease the installation - but as I said, my
+knowledge of RPi/Linux is minimal.</p>
+<p>Cheers<br>
+Malcolm Robb</p>
+<p>If you want the dump1090 program to run automatically every time your
+Raspberry Pi boots, please see the <a href="https://www.satsignal.eu/raspberry-pi/dump1090.html#automated-start">automated
+start/stop script</a> below.<br>
+</p>
+<h2><a name="recompile">Recompiling a new version</a></h2>
+<p>First stop any dump1090 process which is running.&nbsp; You can do this with
+the following commands, first checking whether you have a dump1090 process, and
+then killing it:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">ps
+    -e | grep dump1090</span></i></li>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+    killall dump1090</span></i></li>
+</ul>
+<p> The <i>ps -e</i>
+shows all processes, <i>ps</i> alone would show just your processes.&nbsp; Here's what the end of the list from <i>ps -e</i> looks like on one RPi.</p>
+<pre> 1870 tty5     00:00:00 getty
+ 1871 tty6     00:00:00 getty
+ 1980 ?        00:00:00 sudo
+ 1981 ?        10:43:09 dump1090
+13832 ?        00:00:02 kworker/0:0
+14209 ?        00:00:13 kworker/u:2</pre>
+<p>Alternatively, if you have installed the <a href="https://www.satsignal.eu/raspberry-pi/dump1090.html#automated-start">automated
+start/stop script</a>, below, enter:</p>
+<ul>
+  <li>
+<i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+/etc/init.d/dump1090.sh stop</span></i></li>
+</ul>
+<p>Now follow these steps as you did before, with the additional step of moving
+(<i>mv)</i> the existing dump0190 directory to a safety copy, here named
+dump1090-001.&nbsp; For your next recompile when dump1090-001 will already
+exist, your might want to use dump1090-002, and so on.&nbsp; Note that if you
+are also running ppup1090 to send your output to Plane Plotter (and if you
+aren't, why not!), then you also need to copy the customised coaa.h which you
+have been sent to replace the newly downloaded file.</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">cd
+    /home/pi/</span></i></li>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">mv
+    dump1090 dump1090-001</span></i></li>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">git
+    clone git://github.com/MalcolmRobb/dump1090.git</span></i></li>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">cd
+    dump1090</span></i></li>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">cp
+    ../coaa.h . # if you are also running ppup1090</span></i></li>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">make</span></i></li>
+</ul>
+<p>Now you can start the program and logout.&nbsp; Use one of the two following
+commands according to your needs:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+    ./dump1090 --quiet --no-fix --gain -10 --net
+    &amp;</span></i></li>
+  <li>
+    <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">
+    ./dump1090 --quiet --no-fix --gain -10 --net --net-ro-size 500 --net-ro-rate 5
+    &amp;</span></i></li>
+</ul>
+<p>Just type logout after starting the program.&nbsp; Alternatively, if you have
+installed the automated start/stop script below, enter:</p>
+<ul>
+  <li>
+<i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+/etc/init.d/dump1090.sh start</span></i></li>
+</ul>
+<p>
+</p>
+<h3><a name="version">How do I know what version I am running?</a></h3>
+<p>Run the command:</p>
+<ul>
+  <li><span style="background-color: #E0E0E0"><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">./dump1090
+    --help</span></i></span></li>
+</ul>
+<p>If you have just logged in, you will need to change to the dump1090 directory
+first, or run the following command from your home directory:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">dump1090/dump1090
+    --help</span><span style="background-color: #cccccc; font-family: inherit; line-height: 20px"><br>
+    </span>
+    </i></li>
+</ul>
+  <table border="1" cellspacing="0" cellpadding="4">
+    <tbody><tr>
+      <th><font size="2">Date</font></th>
+      <th><font size="2">Version</font></th>
+      <th><font size="2">Release notes</font></th>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">2013-Apr-14</font></td>
+      <td valign="top"><font size="2">1.00.1404.13</font></td>
+      <td valign="top">
+        <font size="2">* Add version number to help output screen.<br>
+        * Add <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">--net-ro-size</span></i> command line switch.
+            This defines the minimum size of packets written to the Ethernet in raw data output modes.
+            The default is 0, so the program will send all packets as soon as they arrive.
+            If you suffer from high network load due to lots of small packets, invoke this switch with a
+            parameter between 100 and 1300.<br>
+        *</font> <font size="2">SBS-1 ASCII output changes suggested by JungleJet/Jetvision. Apparently, this makes the output more compatible with Plane Plotter and RTL1090.</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">2013-Apr-15</font></td>
+      <td valign="top"><font size="2">1.01.1504.13</font></td>
+      <td valign="top">
+        <font size="2">* Added <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">--net-ro-rate</span></i> command line switch.
+            The default is 0. This works in conjunction with <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">--net-ro-size</span></i>.
+            The program will attempt to gather up <i>net-ro-size</i> raw bytes before sending them out over Ethernet.
+            However, to avoid a long wait if the traffic density is very low, the program will only wait for
+            <i>net-ro-rate</i> 64 millisecond periods since the last send before sending any data added to the output buffer since the last send.
+            This allows the user to tailor the network load to suit their requirements.<br>
+        * Print out the SI/II when decoding DF-11.<br>
+        * Stop attempting to error correct DF-11 frames.<br>
+        * Correct final CR-LF added to SBS-1 ASCII output.<br>
+        * A few other tweaks aimed at reducing CPU load.</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">2013-Apr-19</font></td>
+      <td valign="top"><font size="2">1.01.1924.13</font></td>
+      <td valign="top">
+        <font size="2">* Fix bug in the Raw Binary beast output format.
+        I had the signal strength byte before the MLAT time-tags, not after.
+        Oops!</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">2013-Apr-22</font></td>
+      <td valign="top"><font size="2">1.02.2204.13</font></td>
+      <td valign="top">
+        <font size="2">* Added <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px"> --modeac</span></i> command line switch, first attempt at decoding legacy SSR Modes A and C.
+        If the command line switch <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px"> --modeac</span></i> is used, the program will now
+        attempt to recover Mode A/C signals contained in the raw I/Q data stream.
+        The current recovery mechanism is quite strict and does not cope well with overlapping and corrupt SSR replies.
+        I estimate that less than 20% of possible returns are decoded correctly.
+        I hope that over the next few iterations this can be improved. If outputting raw data over an
+        Ethernet link it is recommended to also use the <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px"> --net-ro-size</span></i> and
+        <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px"> --net-ro-rate</span></i> command line options to reduce the number of very small
+        Ethernet packets that will be generated by mode A/C replies.<br>
+        </font> <font size="2">When the <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px"> --interactive</span></i> switch is used, the software attempts to match the Mode A and Mode C replies to known Mode S records.
+        If no match is found, after a fixed number of receptions (4 for Mode A, 127 for Mode C) the raw Mode A/C will be displayed with an ICAO prefix of "FF" added to the records.
+        So a Mode A of 3351 will be displayed as FF3351. You should note that it is not possible to
+        positively distinguish all Mode A values from Mode C ones, so there may well be unexpected entries.
+        There are 4096 possible Mode A codes, whilst there are less than 450 likely Mode
+        Cs. However, it appears that, in the UK at least, Mode A codes are
+        deliberately chosen so that they don't clash with possible Mode C Altitude codes.<br>
+         To make sure Plane Plotter is receiving Modes A, C and S, open the
+        View =&gt; Message rates window. The Mode A/C message rate is shown in blue.
+        To see Mode A in Plane Plotter, use the View =&gt; Aircraft List Display
+        Options =&gt; Mode A/C =&gt; List Mode A/C Squawks, and tick it to <i>on</i>.
+        Mode A data will appear in your Aircraft View windows with ICAOs preceded
+        by XX. To see the Mode C in PP, use the View =&gt; Mode-C Altitudes Window.
+        The Green dots are Mode C.</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">14-May-2013</font></td>
+      <td valign="top"><font size="2">1.06.1405.13</font></td>
+      <td valign="top">
+        <font size="2">Version update for terribl and bdavenport's combined
+        changes</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">19-Aug-2013</font></td>
+      <td valign="top"><font size="2">1.07.1908.13</font></td>
+      <td valign="top">
+        <font size="2">Split into separate modules and remove some local
+        filtering.</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">04-Oct-2013</font></td>
+      <td valign="top"><font size="2">1.07.0410.13</font></td>
+      <td valign="top">
+        <font size="2">Extra list decoding for DF-0 and DF-16, bug-fix in
+        position decoding, DF-11 SI/II Detection changes.</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">07-Oct-2013</font></td>
+      <td valign="top"><font size="2">1.07.0710.13</font></td>
+      <td valign="top">
+        <font size="2">Makefile updates, add ppup1090 program.</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">24-Feb-2014</font></td>
+      <td valign="top"><font size="2">1.08.2302.14</font></td>
+      <td valign="top">
+        <font size="2">(Malcolm writes) I hope this will fix the following problems that may have been affecting the reliability of MLAT and Beamfinder operation.<br>
+        <br>
+ 1) Missing blocks cause timestamp slips<br>
+ 2) Incorrect beast binary input/output handling of 0x1a escape characters<br>
+        <br>
+ If you chose to update to this version, and if you're running the ppup109
+        uploader, please make sure you re-compile both the main dump1090 and ppup1090. The new dump1090 won't work with the old ppup1090. There are no additional command line switches, so your
+        existing startup scripts should still work.</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">10-Mar-2014</font></td>
+      <td valign="top"><font size="2">1.08.1003.14</font></td>
+      <td valign="top">
+        <font size="2">Adds heartbeat to try and prevent Plane Plotter for
+        making repeated TCP connection attempts.</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">27-May-2014</font></td>
+      <td valign="top"><font size="2">1.08.2705.14</font></td>
+      <td valign="top">
+        <font size="2">1) Additional command line option "--net-buffer &lt;n&gt;" to specify the   TCP output buffer size.&nbsp;
+        Default is n=0, which is 64Kb.&nbsp;&nbsp; Specify a   value of n to increase the buffer size according to:
+        <i>    Size  = 64Kb * 2^n, so an n of 1 = 128Kb, n=2 is 256Kb etc</i>.   n is limited to 7, so the max size is 8Mb.&nbsp;
+        This option may assist if   you have a high number of aircraft being received, and an unreliable   network connection, or if the receiving end can be busy for an   extended time.<br>
+        2) Bug fix in ppup1090 which prevented the uploading of valid Mode-A/Squawk codes<br>
+        3) Bug fix per Markus Grab's commit. May produce a very, very, infinitesimally
+        small increase in message rate.</font>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><font size="2">30-Oct-2014</font></td>
+      <td valign="top"><font size="2">1.10.3010.14</font></td>
+      <td valign="top">
+        <font size="2">Updates for the Windows version, other enhancements.</font>
+      </td>
+    </tr>
+  </tbody></table>
+<p>Full details of these and all other updates are available <a href="https://github.com/MalcolmRobb/dump1090/commits/master" target="_blank">here</a>.<br>
+</p>
+<h2><a name="automated-update">Automated update to a new version</a></h2>
+<p>Roger Peggram, G7RUH, has kindly provided a documented script which will
+automate updating of the program.&nbsp; I have put the script and Roger's note
+into this <a href="https://www.satsignal.eu/raspberry-pi/updatedump1090.v1.1.zip">Zip file</a> (updated to V1.1,
+2014-Oct-21).</p>
+<p><i>Roger writes: </i>Attached is a script file I wrote for a potential user who is not really computer literate.&nbsp;
+I did it so the dump1090 program can be backed up and updated just by running the script.&nbsp;
+As you can see it has a little error detection built in. I have commented the script so it should be self-explanatory.<br>
+<br>
+Assuming you have downloaded all the required packages then running this script will download current version of the code from GIT and compile it.&nbsp;
+It first makes a backup, just in case the compile/download process fails.&nbsp; The idea being it should "just work" and if it does not or gives an error then the end user should seek help from the person who installed it.&nbsp;
+I don't expect the user to fix the problems unless, of course they are more knowledgeable than the intended end-user.<br>
+<br>
+If you think it worthy, please feel free to use it and make it available on the web page
+or via git.&nbsp; I don't claim to be an expert script writer, having just got back to "cutting code" after a gap of some 30 years.&nbsp;
+I am happy to accept comments, updates, suggestions and (low temperature) flames!&nbsp;
+I am fairly sure I have tested for all possible errors, but you never know!<br>
+<br>
+Just my way of saying thank-you for a simple to use bit of code for a cost-effective ASDB radar solution on a Raspberry Pi.<br>
+</p>
+<h2>
+<a name="automated-start">
+Starting the dump1090 program automatically</a></h2>
+<p>Here is some information kindly provided by Steve Tickle, who notes that he
+is a Linux user,
+as opposed to a Linux guru...<br>
+<br>
+<i>Steve writes: </i>Basically, you would run the program as a daemon, which is broadly
+equivalent to a service, in Windows parlance.&nbsp; What that means is that a program can run without a user having to be logged in to start and stop
+it.&nbsp; So what we'll do is create a little script which is run when the RPi boots and which in turn will start our dump1090 program.&nbsp;
+Linux has 6 run
+levels so we'll then create a number of shortcuts which cause the script (and therefore dump1090) to start or stop according to which run level
+Linux is booting into or if it's shutting down.<br>
+<br>
+The assumptions I'll make are that the directory dump1090 executable lives in is /home/pi/dump1090 and the
+command-line switches are the ones that Malcolm first used in his example.<br>
+<br>
+First create the script with the command:</p>
+<ul>
+  <li>
+<i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+nano /etc/init.d/dump1090.sh</span></i></li>
+</ul>
+<p>
+Now copy and paste the following into the new file:</p>
+<table border="1" cellspacing="0" cellpadding="10">
+  <tbody><tr>
+    <td>
+      <pre>#!/bin/bash
+### BEGIN INIT INFO
+#
+# Provides:		dump1090
+# Required-Start:	$remote_fs
+# Required-Stop:	$remote_fs
+# Default-Start:	2 3 4 5
+# Default-Stop:		0 1 6
+# Short-Description:	dump1090 initscript
+
+#
+### END INIT INFO
+## Fill in name of program here.
+PROG="dump1090"
+PROG_PATH="/home/pi/dump1090"
+PROG_ARGS="--interactive --net --no-fix --net-ro-size 500 --net-ro-rate 5 --net-heartbeat 60 --gain -10"
+PIDFILE="/var/run/dump1090.pid"
+
+start() {
+      if [ -e $PIDFILE ]; then
+          ## Program is running, exit with error.
+          echo "Error! $PROG is currently running!" 1&gt;&amp;2
+          exit 1
+      else
+          ## Change from /dev/null to something like /var/log/$PROG if you want to save output.
+          cd $PROG_PATH
+          ./$PROG $PROG_ARGS 2&gt;&amp;1 &gt;/dev/null &amp;
+          echo "$PROG started"
+          touch $PIDFILE
+      fi
+}
+
+stop() {
+      if [ -e $PIDFILE ]; then
+          ## Program is running, so stop it
+         echo "$PROG is running"
+         killall $PROG
+         rm -f $PIDFILE
+         echo "$PROG stopped"
+      else
+          ## Program is not running, exit with error.
+          echo "Error! $PROG not started!" 1&gt;&amp;2
+          exit 1
+      fi
+}
+
+## Check to see if we are running as root first.
+## Found at http://www.cyberciti.biz/tips/shell-root-user-check-script.html
+if [ "$(id -u)" != "0" ]; then
+      echo "This script must be run as root" 1&gt;&amp;2
+      exit 1
+fi
+
+case "$1" in
+      start)
+          start
+          exit 0
+      ;;
+      stop)
+          stop
+          exit 0
+      ;;
+      reload|restart|force-reload)
+          stop
+          start
+          exit 0
+      ;;
+      **)
+          echo "Usage: $0 {start|stop|reload}" 1&gt;&amp;2
+          exit 1
+      ;;
+esac
+exit 0</pre>
+    </td>
+  </tr>
+</tbody></table>
+<p>Now we make this file executable with the following command:</p>
+<ul>
+  <li>
+<i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+chmod +x /etc/init.d/dump1090.sh</span></i></li>
+</ul>
+<p>
+Now we create the runlevel shortcuts with the command:</p>
+<ul>
+  <li>
+<i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+update-rc.d dump1090.sh defaults</span></i></li>
+</ul>
+<p>
+And that's about it. If we reboot the RPi it will start dump1090 automatically.&nbsp;
+If we later log into the RPi, we can stop or restart dump1090 with the commands:</p>
+<ul>
+  <li>
+<i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+/etc/init.d/dump1090.sh stop</span></i></li>
+</ul>
+<p>
+or</p>
+<ul>
+  <li>
+<i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+/etc/init.d/dump1090.sh start</span></i><br>
+<br>
+<a href="http://en.wikipedia.org/wiki/E&amp;OE" target="_blank">E&amp;OE</a> as they say!</li>
+</ul>
+<p>Oh, and it you want to remove dump1090 as a service, try:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+update-rc.d -f dump1090.sh remove</span></i></li>
+</ul>
+<p>
+</p>
+<h2>
+<a name="ppup1090">Uploading to the Plane Plotter server directly from the
+Raspberry Pi</a></h2>
+<h3>Getting started - posted by Malcolm in the Plane Plotter Yahoo group</h3>
+<p>I think we're ready to try a basic uploader. However please note the following words of
+caution:</p>
+<ol>
+  <li>It will only work on a Raspberry Pi or similar system running Raspian Linux.&nbsp;
+    It is very unlikely to work on other systems.<br>
+  </li>
+  <li>The uploader does not currently support Master User (MU) operation, but
+    can provide data for Mlat (multilateration).<br>
+    </li>
+  <li>You can continue to connect to your RPi from your PC and upload from the PC as
+    normal.&nbsp; If you are a GS/MU you can still do Mlats/SMU and all the stuff you used to do.
+    No changes should be required at the PC end.</li>
+</ol>
+<p> Ok - To use the uploader do the following:</p>
+<ol>
+  <li>Update your dump1090 installation with the latest github source.&nbsp; Recompile everything and restart dump1090.&nbsp;
+    The current version is 1.07.0610.13. (i.e. 6 October 2013).<br>
+    </li>
+  <li>Make sure the new dump1090 is working with Plane Plotter as normal.<br>
+    </li>
+  <li>You <b><i>must</i></b> then go to <a href="http://www.coaa.co.uk/rpi-request.htm" target="_blank">http://www.coaa.co.uk/rpi-request.htm</a> and enter your
+    details, and the co-ordinates of your RPi, or more specifically your antenna.&nbsp;
+    You will then be e-mailed your own personal copy of a file called <i>coaa.h</i>.&nbsp;
+    Copy this file to your home directory for safe keeping, and also to the directory containing your dump1090 code to overwrite the dummy version supplied in the download.<br>
+    </li>
+  <li>At the RPi command prompt type "<font face="Courier New">make -f
+    makeppup1090</font>".&nbsp; Note that you will need to be in the
+    dump1090 directory.&nbsp; This should recompile a program called
+    ppup1090 (<i>ppup</i> stands for plane plotter upload).&nbsp; If you haven't downloaded you own version of
+    <i> coaa.h</i> (step3) you <i>will</i> get errors here.<br>
+    </li>
+  <li>Once compiled error free, at the command prompt type "<font face="Courier New">./ppup1090</font>".&nbsp;
+    This should start ppup1090 running, and you will get a countdown message till the next upload.&nbsp;
+    Uploads occur every 60 seconds, and you should get a count of the number of aircraft uploaded, with position and
+    positionless, and a status message giving you an Ok message and a time.&nbsp;
+    It can also print out some cryptic error codes if you are doing something wrong, or attempting to abuse the PP
+    system. You will have to contact me to know what they mean.&nbsp; Some of them indicate that you have fiddled with code that you should not have!</li>
+</ol>
+<p><b>Notes</b></p>
+<p> ppup1090 must be started <i>after</i> dump1090.&nbsp; If dump1090 is not running when you attempt to run ppup1090 then ppup1090 will terminate.</p>
+<p> If ppup1090 is being run on the same RPi as the main dump1090, then no command line arguments should be necessary.&nbsp;
+ppup1090 defaults to connecting to dump1090 via 127.0.0.1:30005, which is the loopback IP address and default beast output port.</p>
+<p>However, if you're running dump1090 on a separate RPi, then yes, you do need to specify the IP address of the RPi running dump1090.&nbsp;
+And if you're running dump1090 with a different beast output port to the default (30005) then you also need to specify that.
+The command line in either case should be something like:</p>
+<blockquote>
+  <p><font face="Courier New">ppup1090 --net-bo-ipaddr &lt;IPv4&gt; --net-bo-port &lt;port&gt;</font></p>
+</blockquote>
+<p> Anyway, give it a go and see what happens.&nbsp; I'm not claiming it'll be an easy install, and there may well still be issues, but hopefully it should give those of us with remote RPi installs the ability to upload to PP 24/7.<br>
+<br>
+ If you get errors, please post (on the<a target="_blank" href="https://groups.io/g/planeplotter">
+PlanePlotter Group</a>) the exact command line arguments you're using for both dump1090 and ppup1090, together with any error messages and I'll attempt to work out what is going on.</p>
+<h3>
+Compiling</h3>
+<p>Malcolm has created separate makefiles for dump1090, view1090 and ppup1090,
+and these can be
+run with the command line "make -f makedump1090", "make -f
+makeview1090" and "make -f makeppup1090".&nbsp; Running the make
+command on its own creates just dump1090 and view1090.</p>
+<p>Once compiled error free, at the command prompt type "./ppup1090 &amp;".&nbsp;
+This runs the program in the background and allows it to continue running after
+you log out.</p>
+<h3>Checking it's working....</h3>
+<p>Look at the personalised <i>coaa.h</i> you were sent (use the <i>cat</i>
+command), and you will see a hex authorisation code - something like
+123abc.&nbsp; Substitute that hex string in the URL:</p>
+<p> http://www.coaa.co.uk/rpiusers.php?authcode=123abc</p>
+<p>and you should get a report like this:</p>
+<blockquote>
+  <table border="1">
+    <tbody><tr>
+      <td colspan="7" align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>PlanePlotter installation
+        123321</b></font></td>
+    </tr>
+    <tr>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>Time last accessed (UTC)</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>User</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>Count</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>Last acft up</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>Tot acft up</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>Share
+        code</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>Valid
+        GS</b></font></td>
+    </tr>
+    <tr>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>2012-01-12
+        12:34:56</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>&lt;your-name&gt;</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>444806</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>14</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>4177369</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>AA</b></font></td>
+      <td align="center" bgcolor="#FFFF00"><font color="#0000FF" face="Times New Roman"><b>yes</b></font></td>
+    </tr>
+  </tbody></table>
+</blockquote>
+<h3><a name="startup-both">Sample startup-script for both dump1090 and ppup1090</a></h3>
+<p>Steve Tickle has kindly supplied this script to start both the dump1090
+program and the ppup1090 program when the Raspberry pi starts running.&nbsp; You
+can create it as discussed above in /etc/init.d/dump1090.sh</p>
+<p>[DJT] There could be errors in the script below - please use with
+caution. I modified it slightly from Steve's original.&nbsp; I have also
+placed this file in the <a href="https://groups.yahoo.com/neo/groups/planeplotter/files" target="_blank">Plane
+Plotter Yahoo Group's Files area</a> as <i>dump1090.sh.txt </i>in case the
+download from scraping this Web page proves faulty.</p>
+<p>[DJT] <a href="https://groups.io/g/planeplotter/message/104173" target="_blank">Paul
+Gulliver noted</a> that there's an alternative way mentioned <a href="https://discussions.flightaware.com/t/how-to-feed-plane-plotter-site-directly-from-raspberry-pi/37538" target="_blank">here</a>.&nbsp;
+Look for section (3) "Make ppup1090 to auto-start at boot".</p>
+<table border="1" cellspacing="0" cellpadding="10">
+  <tbody><tr>
+    <td>
+      <pre>#!/bin/bash
+### BEGIN INIT INFO
+#
+# Provides:             dump1090
+# Required-Start:       $remote_fs
+# Required-Stop:        $remote_fs
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description:    dump1090 initscript
+
+#
+### END INIT INFO
+## Fill in name of program here.
+PROG="dump1090"
+PROG_PATH="/home/pi/dump1090"
+PROG_ARGS="--quiet  --no-fix --gain -10 --net --net-ro-size 500 --net-ro-rate 5  --net-heartbeat 60"
+PIDFILE="/var/run/$PROG.pid"
+
+PROG2="ppup1090"
+PROG2_ARGS="--quiet"
+PIDFILE2="/var/run/$PROG2.pid"
+DELAY=5
+
+start() {
+      if [ -e $PIDFILE ]; then
+          ## Program is running, exit with error.
+          echo "Error! $PROG is currently running!" 1&gt;&amp;2
+          exit 1
+      else
+          ## Change from /dev/null to something like /var/log/$PROG if you want to save output.
+          cd $PROG_PATH
+          ./$PROG $PROG_ARGS 2&gt;&amp;1 &gt;/dev/null &amp;
+          echo "$PROG started, waiting $DELAY seconds..."
+          touch $PIDFILE
+          sleep $DELAY
+          echo "Attempting to start $PROG2..."
+          ./$PROG2 $PROG2_ARGS 2&gt;&amp;1 &gt;/dev/null &amp;
+          echo "$PROG2 started"
+          touch $PIDFILE2
+      fi
+}
+
+stop() {
+      if [ -e $PIDFILE ]; then
+          ## Program is running, so stop it
+         echo "$PROG is running"
+         killall $PROG2
+         killall $PROG
+         rm -f $PIDFILE2
+         rm -f $PIDFILE
+         echo "$PROG stopped"
+      else
+          ## Program is not running, exit with error.
+          echo "Error! $PROG not started!" 1&gt;&amp;2
+          exit 1
+      fi
+}
+
+## Check to see if we are running as root first.
+## Found at http://www.cyberciti.biz/tips/shell-root-user-check-script.html
+if [ "$(id -u)" != "0" ]; then
+      echo "This script must be run as root" 1&gt;&amp;2
+      exit 1
+fi
+
+case "$1" in
+      start)
+          start
+          exit 0
+      ;;
+      stop)
+          stop
+          exit 0
+      ;;
+      reload|restart|force-reload)
+          stop
+          start
+          exit 0
+      ;;
+      **)
+          echo "Usage: $0 {start|stop|reload}" 1&gt;&amp;2
+          exit 1
+      ;;
+esac
+
+#</pre>
+    </td>
+  </tr>
+</tbody></table>
+<p>Earlier version which may not download correctly....<br>
+
+<table border="1" cellspacing="0" cellpadding="10">
+  <tbody><tr>
+    <td>
+      <pre>#! /bin/sh
+### BEGIN INIT INFO
+# Provides: rc.local
+# Required-Start: $all
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop:
+# Short-Description: Run /etc/rc.local if it exist
+### END INIT INFO
+
+
+PROG="dump1090"
+PROG_PATH="/home/pi/dump1090"
+PROG_ARGS="--quiet  --no-fix --gain -10  --net  --net-ro-size 500  --net-ro-rate 5 --net-heartbeat 60"
+#PROG_ARGS=""
+PIDFILE="/var/run/$PROG.pid"
+PROG2="ppup1090"
+PROG2_ARGS="--quiet"
+PIDFILE2="/var/run/$PROG2.pid"
+DELAY=5
+
+start() {
+    if [ -e $PIDFILE ]; then
+        ## Program is running, exit with error.
+        echo "Error! $PROG is currently running!" 1&gt;&amp;2
+        exit 1
+    else
+        ## Change from /dev/null to something like /var/log/$PROG if you want$
+        cd $PROG_PATH
+        ./$PROG $PROG_ARGS 2&gt;&amp;1 &gt;/dev/null &amp;
+        echo "$PROG started, waiting $DELAY seconds.."
+        touch $PIDFILE
+        sleep $DELAY
+        echo "Attempting to start $PROG2.."
+        ./$PROG2 $PROG2_ARGS 2&gt;1 &gt;/dev/null &amp;
+        echo "$PROG2 started"
+        touch $PIDFILE2
+    fi
+}
+
+stop() {
+    if [ -e $PIDFILE ]; then
+        ## Program is running, so stop it
+        echo "$PROG is running"
+        killall $PROG2
+        killall $PROG
+        rm -f $PIDFILE2
+        rm -f $PIDFILE
+        echo "$PROG stopped"
+    else
+        ## Program is not running, exit with error.
+        echo "Error! $PROG not started!" 1&gt;&amp;2
+        exit 1
+    fi
+}
+
+## Check to see if we are running as root first.
+## Found at http://www.cyberciti.biz/tips/shell-root-user-check-script.html
+if [ "$(id -u)" != "0" ]; then
+    echo "This script must be run as root" 1&gt;&amp;2
+    exit 1
+fi
+
+case "$1" in
+    start)
+        start
+        exit 0
+    ;;
+    stop)
+        stop
+        exit 0
+    ;;
+    reload|restart|force-reload)
+        stop
+        start
+        exit 0
+    ;;
+    **)
+        echo "Usage: $0 {start|stop|reload}" 1&gt;&amp;2
+        exit 1
+    ;;
+esac
+exit 0</pre>
+    </td>
+  </tr>
+</tbody></table>
+</p><h2><br>
+<a name="parameters">Program parameters</a></h2>
+<p>Typing ./dump1090 --help produces the following output:</p>
+<table border="1" cellspacing="0" cellpadding="10">
+  <tbody><tr>
+    <td>
+      <pre>-----------------------------------------------------------------------------
+|                        dump1090 ModeS Receiver         Ver : 1.10.3010.14 |
+-----------------------------------------------------------------------------
+--device-index &lt;index&gt;   Select RTL device (default: 0)
+--gain &lt;db&gt;              Set gain (default: max gain. Use -10 for auto-gain)
+--enable-agc             Enable the Automatic Gain Control (default: off)
+--freq &lt;hz&gt;              Set frequency (default: 1090 Mhz)
+--ifile &lt;filename&gt;       Read data from file (use '-' for stdin)
+--interactive            Interactive mode refreshing data on screen
+--interactive-rows &lt;num&gt; Max number of rows in interactive mode (default: 15)
+--interactive-ttl &lt;sec&gt;  Remove from list if idle for &lt;sec&gt; (default: 60)
+--interactive-rtl1090    Display flight table in RTL1090 format
+--raw                    Show only messages hex values
+--net                    Enable networking
+--modeac                 Enable decoding of SSR Modes 3/A &amp; 3/C
+--net-beast              TCP raw output in Beast binary format
+--net-only               Enable just networking, no RTL device or file used
+--net-bind-address &lt;ip&gt;  IP address to bind to (default: Any; Use 127.0.0.1 for private)
+--net-http-port &lt;port&gt;   HTTP server port (default: 8080)
+--net-ri-port &lt;port&gt;     TCP raw input listen port  (default: 30001)
+--net-ro-port &lt;port&gt;     TCP raw output listen port (default: 30002)
+--net-sbs-port &lt;port&gt;    TCP BaseStation output listen port (default: 30003)
+--net-bi-port &lt;port&gt;     TCP Beast input listen port  (default: 30004)
+--net-bo-port &lt;port&gt;     TCP Beast output listen port (default: 30005)
+--net-ro-size &lt;size&gt;     TCP raw output minimum size (default: 0)
+--net-ro-rate &lt;rate&gt;     TCP raw output memory flush rate (default: 0)
+--net-heartbeat &lt;rate&gt;   TCP heartbeat rate in seconds (default: 60 sec; 0 to disable)
+--net-buffer &lt;n&gt;         TCP buffer size 64Kb * (2^n) (default: n=0, 64Kb)
+--lat &lt;latitude&gt;         Reference/receiver latitude for surface posn (opt)
+--lon &lt;longitude&gt;        Reference/receiver longitude for surface posn (opt)
+--fix                    Enable single-bits error correction using CRC
+--no-fix                 Disable single-bits error correction using CRC
+--no-crc-check           Disable messages with broken CRC (discouraged)
+--phase-enhance          Enable phase enhancement
+--aggressive             More CPU for more messages (two bits fixes, ...)
+--mlat                   display raw messages in Beast ascii mode
+--stats                  With --ifile print stats at exit. No other output
+--stats-every &lt;seconds&gt;  Show and reset stats every &lt;seconds&gt; seconds
+--onlyaddr               Show only ICAO addresses (testing purposes)
+--metric                 Use metric units (meters, km/h, ...)
+--snip &lt;level&gt;           Strip IQ file removing samples &lt; level
+--debug &lt;flags&gt;          Debug mode (verbose), see README for details
+--quiet                  Disable output to stdout. Use for daemon applications
+--ppm &lt;error&gt;            Set receiver error in parts per million (default 0)
+--help                   Show this help
+
+Debug mode flags: d = Log frames decoded with errors
+                  D = Log frames decoded with zero errors
+                  c = Log frames with bad CRC
+                  C = Log frames with good CRC
+                  p = Log frames with bad preamble
+                  n = Log network debugging info
+                  j = Log frames to frames.js, loadable by debug.html</pre>
+    </td>
+  </tr>
+</tbody></table>
+<p>
+&nbsp;</p>
+<h2><a name="network">
+Network connection dropping</a></h2>
+<p><i>Al Henderson had been having problems with the network connection from his
+Raspberry Pi dropping out, but in late October 2013 he resolved it, and posted
+this note on the <a target="_blank" href="https://groups.io/g/planeplotter"> PlanePlotter
+Group</a>:</i></p>
+<p>For a few months now, I have been running a Raspberry Pi with the RTL dongle and dump1090 to feed PP.&nbsp;
+It's never been 100% reliable, seeming to drop its <a href="https://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html#Wi-Fi"> Wi-Fi connection</a> every so often which is frustrating.</p>
+<p>I think I found out why last night.&nbsp; A simple Google brought me to a number of pages that discussed how to turn off the power management on the
+Wi-Fi dongle (it's an <a href="http://www.edimax.com/edimax/merchandise/merchandise_detail/data/edimax/global/wireless_adapters_n150/ew-7811un" target="_blank"> Edimax
+7811Un</a>).&nbsp; This dongle goes into power save when network traffic drops off, and getting it to wake up seems to be a problem.
+Certainly Plane Plotter trying to re-establish it's TCP/IP link doesn't appear to do it.</p>
+<p>To try and sort this problem, I did two things (although either one of them should suffice).&nbsp;
+Firstly, I put an entry in the cron file on the Pi to ping my router every minute - this should keep the network alive and stop the dongle going into power saving.&nbsp;
+Secondly, I turned power saving off for the dongle.&nbsp; This part was specific to the model of dongle, in case anyone else has the same one, here's what I did:</p>
+<blockquote>
+  <p>- created a file called /etc/modprobe.d/8192cu.conf<br>
+  - added the line: options 8192cu rtw_power_mgnt=0 rtw_enusbss=0</p>
+</blockquote>
+<p>I did the former because I didn't have complete confidence in doing the latter - the page I was looking at didn't say if you had to do anything else to make that happen.</p>
+<p>This seems to have done the job, my Pi has now been running for 12 hours uninterrupted which is something it hasn't done for a long time.&nbsp;
+The drop outs got worse the other week when I changed the dump1090 options to reduce network load - clearly making the dongle fall asleep more often!</p>
+<p><i>Thanks for posting that information, Al. I may not have seen the
+problem as both NTP and MRTG will regularly make network connections.<br>
+</i></p>
+<h2><a name="dual-operation">Running two Raspberry Pi cards on different sides
+of the house</a></h2>
+<p><i>Folks who have limited coverage have asked about running two Raspberry Pi
+cards with dongles, with antennas pointed in different directions from a single
+location, or perhaps one from an east-facing and one from a west-facing window.&nbsp;
+Note that these must be at the same location - not two different locations
+connected by the Internet!&nbsp; A helpful note was posted <a href="https://groups.yahoo.com/neo/groups/planeplotter/conversations/messages/91820">here</a>
+by Marco showing how to use the Linux </i>nc<i> command to achieve this.
+Many thanks to Marco! He writes:</i></p>
+<p>So here's my write up regarding a dual receiver using two Raspberry Pi cards, with some amendments since the original post back in December.</p>
+<p>With a spare RPi lying idle on my desk I started wondering if I could use this somehow for a second antenna, as a simple way to get 360 degrees antenna coverage.</p>
+<p>After a bit of online research I found it is actually very easy to use two
+Raspberry Pi cards, each with their own dongle and antenna. Here's how it can be done:</p>
+<p>Two Raspberry Pi cards with dump1090 installed as usual, both network connected.&nbsp;
+We will just for clarity call one of them PRIMARY and the other SECONDARY.&nbsp;
+PlanePlotter connects to the PRIMARY Pi as usual (over port 30005) without any additional configuration in
+PlanePlotter needed.&nbsp; Nor does the SECONDARY unit need any additional configuration.&nbsp;
+Only on the PRIMARY, this line will fetch data from the SECONDARY dump1090 and inject it into the PRIMARY dump1090:</p>
+<blockquote>
+  <pre>nc -d &lt;secondary ip address&gt; 30005 | nc 127.0.0.1 30004 &amp;</pre>
+</blockquote>
+<p>Of course replace "&lt;secondary ip address&gt;"  with the actual IP address of that
+RPi.&nbsp; Entering this on the command line will do the trick, but if this setup is going to be permanent it should be in a startup script.</p>
+<p>How does it work?&nbsp; <i>nc</i> is short for netcat, a very handy set of Linux
+network commands.&nbsp; First we fetch data from the remote RPi, on port 30005 (TCP output port in Beast format).&nbsp;
+The "-d" is there to prevent the connection is broken by any keyboard input.&nbsp;
+Next we pipe this data to the local IP address on port 30004 (TCP input port in Beast format).&nbsp;
+Finally the &amp; is used to let it run in the background.</p>
+<p>With both Raspberry Pi cards linked, the view1090 program can still be used on both.&nbsp;
+On the SECONDARY it shows only the messages received by that Pi, but on the PRIMARY it will show not only its own received messages but also the messages received from the SECONDARY.&nbsp;
+That the setup is working can thus be tested very simply by alternately disconnecting one antenna from its dongle (just the antenna, do not unplug the dongle).&nbsp;
+With the PRIMARY antenna disconnected, view1090 on the PRIMARY will (after a short while) show the same messages as on the SECONDARY view1090.</p>
+<p>After some testing and using this setup for several weeks, I only found one drawback: when the netcat commands are executed on the PRIMARY, dump1090 on the SECONDARY must already be up and running and available on the network, otherwise the linking will fail.&nbsp;
+Also, whenever the connection gets interrupted the link breaks and will not automatically restore.&nbsp;
+Dump1090 on the PRIMARY will continue to function without any problems, regardless of the link being active or not.&nbsp;
+In my setup, the connection is very stable and only is lost when one or both
+Raspberry Pi cards reboot.&nbsp; Therefore on the PRIMARY if have added the netcat command line in my dump1090 startup script with a 2 or 3 second delay after starting dump1090 itself, and making sure that should the
+Raspberry Pi cards be rebooting I first reboot the SECONDARY and then the PRIMARY.</p>
+<p>You can always check on the PRIMARY if the link is active, with the 'ps aux' command there should be two nc processes active.&nbsp;
+Also the 'top' command will intermittently show the nc processes.</p>
+<p>Not tested, but I'm 95% sure that the ppup1090 program on the PRIMARY (if used) will also upload the
+data fed in from the SECONDARY.</p>
+<p>I'm not saying it would make much sense, but more than one SECONDARY can be used, just add the netcat command line for each SECONDARY on the PRIMARY.&nbsp;
+Do NOT use remote SECONDARY antenna's (i.e. over a WAN connection) because the antenna's would not be in the same location anymore and you will mess up the system, I think...</p>
+<p>Any feedback is much appreciated! <i>(feedback can be given on the <a target="_blank" href="https://groups.io/g/planeplotter">PlanePlotter
+Group</a>)</i></p>
+<p>Regards,<br>
+Marco<br>
+&nbsp;
+</p>
+<h2><a name="monit">Integration with monit</a>
+</h2>
+<p><i>Simon Hitzemann writes:</i> Many thanks for the great write-up on how to get dump1090 running on a
+Raspberry Pi.
+</p>
+<p>While everything worked like a charm an integration with monit on monitoring the dump1090 service was a bit tough, so I put together an
+init-script that's a bit nicer to integrate into monitoring solutions while being
+Debian/Raspbian compliant.
+</p>
+<p>I'm using start-stop-daemon in it a lot, it basically implements a lot of the functionality of the original script.&nbsp;
+It's even writing the PID of the process into the PID file and if you try to start it again it either
+notices the PID exists and does nothing or it spawns a new process and puts the new PID into the file.
+</p>
+<p>Long story short, here's the init script. I hope it helps :)&nbsp; <img border="0" src="./ADS-B dump1090_files/icon-download.gif" width="20" height="16">
+<a href="https://www.satsignal.eu/raspberry-pi/dump1090-simon-init.zip">download a Zip file with the script</a>
+</p>
+<p>Cheers,<br>
+Simon<br>
+&nbsp;&nbsp;
+</p>
+<h2>Some useful Linux commands</h2>
+<p>To logout:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">logout</span></i></li>
+</ul>
+<p>To shutdown - which you should do to close the system cleanly before powering
+off - use <i>shutdown</i>. The <i>-P </i>argument turns
+the power off, now says shutdown immediately:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+    shutdown
+    -h -P now</span></i></li>
+</ul>
+<p>To reboot:</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+    reboot</span></i></li>
+</ul>
+<p>To display processes running and their CPU load, memory consumption etc.</p>
+<ul>
+  <li><i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">htop</span></i></li>
+</ul>
+<blockquote>
+  <p><img border="0" src="./ADS-B dump1090_files/htop-screenshot.png" width="829" height="418"><br>
+  <br>
+  Note that you may need to install htop with a <i><span style="background-color: #E0E0E0; font-family: inherit; line-height: 20px">sudo
+  apt-get install htop</span></i>, but you can see that it's worth it!</p>
+</blockquote>
+<h2>&nbsp;<br>
+An alternative approach</h2>
+<p>Perhaps the next step might be to get a better receiver, such as the <a href="http://airspy.com/" target="_blank">Airspy</a>.&nbsp;
+This can be used with the Raspberry Pi to provide better performance than the
+DVB-T dongle provides.&nbsp; Details are <a href="http://airspy.com/quickstart/" target="_blank">here</a>.</p>
+<h2>&nbsp;<br>
+Acknowledgements</h2>
+<p>To Malcolm Robb for the original post, and to Steve Tickle and others for
+much-needed help with Linux.
+</p>
+<h2>&nbsp;<br>
+What else have I done with the Raspberry Pi?</h2>
+<ul>
+  <li>A <a href="https://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html">stratum-1 NTP server</a> with
+microsecond-level offsets and a power consumption of under 4 watts.&nbsp; Information
+    about interfacing a GPS receiver to the Raspberry Pi, choosing between various
+receiver options, and how to compile NTP from the source.&nbsp; I hope you will find the page interesting, and perhaps
+build a GPS-locked stratum-1 NTP server yourself.<br>
+    </li>
+  <li>A <a href="https://www.satsignal.eu/raspberry-pi/DigitalClock.html">Digital Wall clock</a>
+    using the Raspberry Pi - synchronised with NTP, of course!&nbsp; This shows
+    how to automatically login on the Raspberry Pi, how to run a GUI program
+    when starting the desktop, and provides pointers to installing the Free
+    Pascal compiler and Lazarus IDE to compile your own programs.<br>
+</li>
+</ul>
+<h2>What do the terms GS, Mlat, MU, SMU, ADS-B etc. mean?</h2>
+<p>A small glossary of the terms used may be found <a href="http://planeplotter.pbworks.com/Glossary" target="_blank">here</a>.<!--msnavigation--></p></td></tr><!--msnavigation--></tbody></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>
+
+<p>
+&nbsp;
+<table border="0" width="100%">
+  <tbody><tr>
+    <td><font size="1">Copyright © <a href="mailto:david-taylor@blueyonder.co.uk">David
+      Taylor</a>, Edinburgh&nbsp;&nbsp;</font>
+    </td><td align="center"><font size="1"><iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="twitter-follow-button twitter-follow-button-rendered" style="position: static; visibility: visible; width: 114px; height: 20px;" title="Twitter Follow Button" src="./ADS-B dump1090_files/follow_button.4f8aea4342a4ada72cba2bdffcff6b4d.en.html" data-screen-name="gm8arv"></iframe>
+      </font>
+<script id="twitter-wjs" src="./ADS-B dump1090_files/widgets.js.download"></script><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</td>
+    <td align="right"><font size="1">Last modified: 2019 Aug 18 at 07:50
+      </font></td>
+  </tr>
+</tbody></table>
+
+</p></td></tr><!--msnavigation--></tbody></table>
+
+
+<iframe scrolling="no" frameborder="0" allowtransparency="true" src="./ADS-B dump1090_files/widget_iframe.4f8aea4342a4ada72cba2bdffcff6b4d.html" title="Twitter settings iframe" style="display: none;"></iframe></body></html>
